@@ -7,6 +7,11 @@ import EmployeeDetails from './pages/EmployeeDetails';
 import EditEmployee from './pages/EditEmployee';
 import DeleteEmployee from './pages/DeleteEmployee';
 import AddEmployee from './pages/AddEmployee';
+import PageNotFound from './pages/PageNotFound';
+import Dashboard from './pages/Dashboard';
+import Calendar from './pages/Calendar';
+import Messages from './pages/Messages';
+import "./App.css"
 
 const App = () => {
   return (
@@ -21,7 +26,10 @@ const App = () => {
             <Route path='/addemployee' element={<AddEmployee /> } />
             <Route path='/editemployee/:id' element={<EditEmployee /> } />
             <Route path='/deleteemployee/:id' element={<DeleteEmployee /> } />
-            <Route path='*' element={<EmployeeList />} />
+            <Route path='*' element={<PageNotFound />} />
+            <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/calendar' element={<Calendar />} />
+            <Route path='/messages' element={<Messages />} />
           </Routes>
     </div>
    </div>

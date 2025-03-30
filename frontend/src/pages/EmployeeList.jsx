@@ -14,8 +14,6 @@ const EmployeeList = () => {
   const [deleteClicked, setDeleteClicked] = useState(false)
 
   useEffect(()=>{
-    console.log("%%%%%%%%%%%%%%%%%%%%%%%s###########################");
-
       axios.get('http://localhost:8000/employees')
       .then(res => setEmployees(res.data))
       .catch(err => console.error("Error:" , err))
@@ -40,11 +38,11 @@ const EmployeeList = () => {
       </div>
       <div className='col d-flex align-items-center gap-2'>
         <div className="position-relative w-50">
-          <CiSearch className='position-absolute top-50 start-0 translate-middle-y mx-2 text-secondary' />
-          <input type="text" className='form-control ps-4' placeholder='Search' onChange={handleSearch} />
+          <CiSearch className='position-absolute fs-4 top-50 start-0 translate-middle-y ms-3 text-secondary' />
+          <input type="text" className='form-control ps-5' placeholder='Search' onChange={handleSearch} />
         </div>
-        <Link to="/addemployee" className='btn btn-primary w-50'>
-          <CiCirclePlus />Add New Employee
+        <Link to="/addemployee" className='btn btn-primary w-50 text-start'>
+          <CiCirclePlus className='mx-3 fs-4'/>Add New Employee
         </Link>
         </div>
       </div>
@@ -67,21 +65,24 @@ const EmployeeList = () => {
         {employees.length > 0 ? (
           employees.map((emp) =>(
           <tr key={emp.id}>
-          <td style={{ verticalAlign: 'middle'}}>
+          <td style={{ verticalAlign: "middle" }}>
+          <div className="d-flex align-items-center">
           {emp.photo ? (
           <img
             src={`http://localhost:8000/uploads/${emp.photo}`}
             alt="Employee photo"
-            className="rounded-circle"
+            className="rounded-circle me-2"
             style={{ height: "30px", width: "30px", objectFit: "cover" }}
           />
         ) : (
           <div
-            className="rounded-circle bg-dark"
-            style={{ height: "30px", width: "30px", display: "inline-block" }}
+            className="rounded-circle bg-dark me-2"
+            style={{ height: "30px", width: "30px"}}
           ></div>
         )}
-           <span className='ms-2' >{emp.name}</span></td>
+           <span>{emp.name}</span>
+           </div>
+           </td>
           <td style={{ verticalAlign: 'middle'}}>{emp.employee_id}</td>
           <td style={{ verticalAlign: 'middle'}}>{emp.department}</td>
           <td style={{ verticalAlign: 'middle'}}>{emp.designation}</td>
@@ -89,14 +90,14 @@ const EmployeeList = () => {
           <td style={{ verticalAlign: 'middle'}}>{emp.type}</td>
           <td style={{ verticalAlign: 'middle'}}>{emp.status}</td>
           <td>
-            <Link to={`/employeedetails/${emp.id}`} className='btn'><IoEyeOutline className='fs-4' /></Link>
-            <Link to={`/editemployee/${emp.id}`} className='btn'><CiEdit className='fs-4' /></Link>
-            <Link to={`/deleteemployee/${emp.id}`} onClick={()=>setDeleteClicked(true)} className='btn'><RiDeleteBin6Line className='fs-4' /></Link>
+            <Link to={`/employeedetails/${emp.id}`} className='icon-link me-2 '><IoEyeOutline className='fs-4' /></Link>
+            <Link to={`/editemployee/${emp.id}`} className='icon-link me-2'><CiEdit className='fs-4' /></Link>
+            <Link to={`/deleteemployee/${emp.id}`} onClick={()=>setDeleteClicked(true)} className='icon-link '><RiDeleteBin6Line className='fs-4' /></Link>
           </td>
           </tr>
         )) ): (
           <tr>
-            <td>No records found</td>
+            <td className='fw-bold text-center py-5' colSpan='100%'>No records found</td>
           </tr>
          )}
         </tbody>

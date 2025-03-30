@@ -3,14 +3,14 @@ const mysql = require("mysql");
 const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static("uploads")); // Serve static files from uploads folder
+app.use("/uploads", express.static("uploads"));
 
-// Multer config for image upload
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -47,7 +47,7 @@ app.get("/employees", (req, res) => {
 
 app.post("/searchEmployee", (req, res) => {
   const { value } = req.query;
-  const sql = `SELECT * FROM employee WHERE name LIKE '%${value}%' OR employee_id LIKE '%${value}%'`;
+  const sql = `SELECT * FROM employee WHERE name LIKE '%${value}%' OR employee_id LIKE '%${value}%' OR department LIKE '%${value}%'  OR designation LIKE '%${value}%'  OR project LIKE '%${value}%' OR type LIKE '%${value}%' OR status LIKE '%${value}%'`;
   db.query(sql, (err, data) => {
     if (err) return res.json(err);
     return res.json(data);
@@ -64,23 +64,15 @@ app.get("/viewEmployee/:id", (req, res) => {
   });
 });
 
-// 🚀 Updated route with photo upload
 app.post("/createEmployees", upload.single("photo"), (req, res) => {
-  const {
-    name,
-    employee_id,
-    department,
-    designation,
-    project,
-    type,
-    status,
-  } = req.body;
-
+  const id = uuidv4();
+  const { name, employee_id, department, designation, project, type, status } =
+    req.body;
   const photo = req.file ? req.file.filename : null;
-
   const sql =
-    "INSERT INTO employee (name, employee_id, department, designation, project, type, status, photo) VALUES (?,?,?,?,?,?,?,?)";
+    "INSERT INTO employee (id, name, employee_id, department, designation, project, type, status, photo) VALUES (?,?,?,?,?,?,?,?,?)";
   const values = [
+    id,
     name,
     employee_id,
     department,
@@ -90,31 +82,41 @@ app.post("/createEmployees", upload.single("photo"), (req, res) => {
     status,
     photo,
   ];
-
   db.query(sql, values, (err, data) => {
+    console.log("eerrr", err);
     if (err) return res.json(err);
-    return res.json({ message: "Employee created", data });
+    return res.json({ message: "Employee created", id });
   });
 });
 
-app.put("/updateEmployee/:id", (req, res) => {
+app.put("/updateEmployee/:id", upload.single("photo"), (req, res) => {
   const id = req.params.id;
   const { name, employee_id, department, designation, project, type, status } =
     req.body;
-  const sql =
-    "UPDATE employee SET name = ?, employee_id = ?, department = ?, designation = ?, project = ?, type = ?, status = ? WHERE id = ?";
-  const values = [
-    name,
-    employee_id,
-    department,
-    designation,
-    project,
-    type,
-    status,
-  ];
-  db.query(sql, [...values, id], (err, data) => {
-    if (err) return res.json(err);
-    return res.json({ message: "Employee updated", data });
+  let newPhoto = req.file ? req.file.filename : null;
+  const getPhotoQuery = "SELECT photo FROM employee WHERE id = ?";
+  db.query(getPhotoQuery, [id], (err, results) => {
+    if (err) return res.status(500).json(err);
+    const existingPhoto = results[0]?.photo;
+    if (!newPhoto) newPhoto = existingPhoto;
+    const sql =
+      "UPDATE employee SET name = ?, employee_id = ?, department = ?, designation = ?, project = ?, type = ?, status = ?, photo = ? WHERE id = ?";
+    const values = [
+      name,
+      employee_id,
+      department,
+      designation,
+      project,
+      type,
+      status,
+      newPhoto,
+      id,
+    ];
+
+    db.query(sql, values, (err, data) => {
+      if (err) return res.status(500).json(err);
+      return res.json({ message: "Employee updated successfully", data });
+    });
   });
 });
 

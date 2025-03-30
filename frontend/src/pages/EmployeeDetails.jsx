@@ -45,11 +45,13 @@ const EmployeeDetails = () => {
 
   return (
     <div className='container'>
-      <div className='border-bottom p-2'>
-        <h1 className='mb-4' onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+      <div className='border-bottom p-2 position-relative'>
+        <h1 className='mb-5' onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
           <MdKeyboardArrowLeft /> View Employee Details
         </h1>
+        <div className="d-inline-block border-bottom border-2 border-info position-absolute bottom-0 start-0 pb-2 px-3">
         <h5 className='text-info'><IoMdPerson /> Personal Information</h5>
+        </div>
       </div>
       <form className='p-2 mt-2 row'>
       <div>
